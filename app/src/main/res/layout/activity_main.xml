@@ -13,7 +13,7 @@
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/edittext1"
+        android:id="@+id/edit_pass"
         android:inputType="numberDecimal"
         android:selectAllOnFocus="true"
         android:textIsSelectable="true"
