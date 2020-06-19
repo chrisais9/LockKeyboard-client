@@ -1,4 +1,4 @@
-package kr.koohyongmo.lockkeyboard_client.utils
+package kr.koohyongmo.lockkeyboardclient.utils
 
 import android.content.Context
 import android.util.DisplayMetrics

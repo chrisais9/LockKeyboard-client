@@ -1,9 +1,10 @@
-package kr.koohyongmo.lockkeyboard_client
+package kr.koohyongmo.lockkeyboardclient
 
 import android.inputmethodservice.Keyboard
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
+import kr.koohyongmo.lockkeyboardclient.keyboard.LockKeyboardView
 
 class MainActivity : AppCompatActivity() {
 
