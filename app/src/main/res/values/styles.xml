@@ -8,4 +8,8 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="switchIncognito">
+        <item name="colorControlActivated">#58a7a2</item>
+    </style>
+
 </resources>

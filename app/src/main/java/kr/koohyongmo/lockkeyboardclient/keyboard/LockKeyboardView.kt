@@ -6,7 +6,6 @@ import android.content.Context
 import android.graphics.*
 import android.inputmethodservice.KeyboardView
 import android.util.AttributeSet
-import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.view.View.OnFocusChangeListener
@@ -27,9 +26,12 @@ class LockKeyboardView(
     context: Context?,
     attrs: AttributeSet?
 ) : KeyboardView(context, attrs) {
+
+    var isIncognitoMode: Boolean = false
+
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
-        if (isAllignBottomCenter) {
+        if (isAlignBottomCenter) {
             val relativeLayoutParams =
                 layoutParams as RelativeLayout.LayoutParams
             relativeLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM)
@@ -283,8 +285,12 @@ class LockKeyboardView(
                     if (start != end) {
                         editable!!.delete(start, end)
                     }
-                    inputManager.onKeyCharInput(primaryCode)
-                    editable!!.insert(start, primaryCode.toChar().toString())
+                    if(isIncognitoMode) {
+                        editable!!.insert(start, "*")
+                        inputManager.onKeyCharInput(primaryCode)
+                    } else {
+                        editable!!.insert(start, primaryCode.toChar().toString())
+                    }
                 }
             }
 
@@ -308,7 +314,7 @@ class LockKeyboardView(
         private var width = 0
         private lateinit var mHandlePath: Path
         private lateinit var mHandlePaint: Paint
-        var isAllignBottomCenter = false
+        var isAlignBottomCenter = true
 
     }
 

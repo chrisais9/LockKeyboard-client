@@ -5,4 +5,6 @@
     <color name="colorAccent">#FF4081</color>
     <color name="keyNormal">#ECEFF1</color>
     <color name="keyPressed">#D1D6D9</color>
+
+    <color name="icon_deactivate">#000000</color>
 </resources>

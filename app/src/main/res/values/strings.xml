@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">LockKeyboard-client</string>
+    <string name="title_incognito_off">보안모드 미작동</string>
+    <string name="title_incognito_on">보안모드 동작중</string>
 </resources>
