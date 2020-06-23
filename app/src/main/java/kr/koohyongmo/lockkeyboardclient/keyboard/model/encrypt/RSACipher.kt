@@ -1,6 +1,7 @@
 package kr.koohyongmo.lockkeyboardclient.keyboard.model.encrypt
 
 import android.util.Base64
+import android.util.Log
 import java.nio.charset.StandardCharsets
 import java.security.*
 import java.security.spec.InvalidKeySpecException
@@ -36,7 +37,16 @@ class RSACipher {
         kpg = KeyPairGenerator.getInstance(CRYPTO_METHOD)
         kpg.initialize(CRYPTO_BITS)
         kp = kpg.genKeyPair()
-        publicKey = kp.public
+//        publicKey = kp.public
+        publicKey = stringToPublicKey("-----BEGIN PUBLIC KEY-----\n" +
+                "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAvaNy3C2Y7inKWoNXDtSY\n" +
+                "mLPAwj9vMvv7NeOgWeEFF9W9o1FTByX+Je5fVLliZqaAvQ+LZB7ORDVnwC35Q/Dx\n" +
+                "gWiiZiUJK7waQH00Q62FNiEy6zSl75KWxvaJd6lKD7VbZmx2l9IydV3SY0e6fbKc\n" +
+                "2H0KpLMa9mPE5a2LKPpalirYP0mhyaIeZTgUO5HFdtDUNzHwjqisUyYIUaWfatxO\n" +
+                "R7W8l1aV7R6hEWMO/JMZ0kzLzVdarTsqCZcM3h/cV9KYiD6cHtuj42veS8tr0M23\n" +
+                "YI3W1b05yAaJtBJ3QHTGntmHKpvaFtMhPUbFcOskNQiVHxh5aYGol4CtizzOx9fG\n" +
+                "/wIDAQAB\n" +
+                "-----END PUBLIC KEY-----\n")!!
         privateKey = kp.private
     }
 
@@ -59,17 +69,10 @@ class RSACipher {
         IllegalBlockSizeException::class,
         BadPaddingException::class
     )
-    fun encrypt(vararg args: Any): String {
-        val plain = args[0] as String
-        val rsaPublicKey: PublicKey?
-        rsaPublicKey = if (args.size == 1) {
-            publicKey
-        } else {
-            args[1] as PublicKey
-        }
-        cipher = Cipher.getInstance("RSA/ECB/OAEPWithSHA1AndMGF1Padding")
-        cipher.init(Cipher.ENCRYPT_MODE, rsaPublicKey)
-        encryptedBytes = cipher.doFinal(plain.toByteArray(StandardCharsets.UTF_8))
+    fun encrypt(string: String): String {
+        cipher = Cipher.getInstance(CRYPTO_ALGORITHM)
+        cipher.init(Cipher.ENCRYPT_MODE, publicKey)
+        encryptedBytes = cipher.doFinal(string.toByteArray(StandardCharsets.UTF_8))
         return Base64.encodeToString(encryptedBytes, Base64.DEFAULT)
     }
 
@@ -81,7 +84,7 @@ class RSACipher {
         BadPaddingException::class
     )
     fun decrypt(result: String?): String {
-        cipher1 = Cipher.getInstance("RSA/ECB/OAEPWithSHA1AndMGF1Padding")
+        cipher1 = Cipher.getInstance(CRYPTO_ALGORITHM)
         cipher1.init(Cipher.DECRYPT_MODE, privateKey)
         decryptedBytes = cipher1.doFinal(Base64.decode(result, Base64.DEFAULT))
         decrypted = String(decryptedBytes)
@@ -95,37 +98,18 @@ class RSACipher {
         IllegalBlockSizeException::class,
         BadPaddingException::class
     )
-    fun getPublicKey(option: String?): String? {
-        return when (option) {
-            "pkcs1-pem" -> {
-                var pkcs1pem: String? = "-----BEGIN RSA PUBLIC KEY-----\n"
-                pkcs1pem += Base64.encodeToString(
-                    publicKey.encoded,
-                    Base64.DEFAULT
-                )
-                pkcs1pem += "-----END RSA PUBLIC KEY-----"
-                pkcs1pem
-            }
-            "pkcs8-pem" -> {
-                var pkcs8pem: String? = "-----BEGIN PUBLIC KEY-----\n"
-                pkcs8pem += Base64.encodeToString(
-                    publicKey.encoded,
-                    Base64.DEFAULT
-                )
-                pkcs8pem += "-----END PUBLIC KEY-----"
-                pkcs8pem
-            }
-            "base64" -> Base64.encodeToString(
-                publicKey.encoded,
-                Base64.DEFAULT
-            )
-            else -> null
-        }
-    }
+
+    fun getPublicKey(): String =
+        Base64.encodeToString(
+            publicKey.encoded,
+            Base64.DEFAULT
+        )
+
 
     companion object {
         private const val CRYPTO_METHOD = "RSA"
         private const val CRYPTO_BITS = 2048
+        private const val CRYPTO_ALGORITHM = "RSA/ECB/OAEPWithSHA1AndMGF1Padding"
 
         @Throws(
             NoSuchAlgorithmException::class,

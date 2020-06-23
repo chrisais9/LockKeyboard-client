@@ -58,7 +58,7 @@
 
     <kr.koohyongmo.lockkeyboardclient.keyboard.LockKeyboardView
         android:id="@+id/keyboardview"
-        android:layout_width="180dp"
+        android:layout_width="350dp"
         android:layout_height="210dp"
         android:background="@android:color/transparent"
         android:elevation="1dp"
@@ -67,7 +67,6 @@
         android:keyBackground="@drawable/keyback"
         android:keyTextColor="#384850"
         android:shadowRadius="0.0"
-        android:visibility="gone" />
-
+        android:visibility="gone"/>
 
 </RelativeLayout>

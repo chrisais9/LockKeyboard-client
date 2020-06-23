@@ -6,6 +6,7 @@ import android.content.Context
 import android.graphics.*
 import android.inputmethodservice.KeyboardView
 import android.util.AttributeSet
+import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.view.View.OnFocusChangeListener
@@ -14,9 +15,9 @@ import android.view.ViewGroup.MarginLayoutParams
 import android.view.WindowManager
 import android.widget.EditText
 import android.widget.RelativeLayout
-import io.reactivex.Observable
-import io.reactivex.ObservableEmitter
-import io.reactivex.rxkotlin.Observables
+import kr.bitbyte.playkeyboard.rx.RxBus
+import kr.bitbyte.playkeyboard.rx.RxEvents
+import kr.koohyongmo.lockkeyboardclient.R
 import kr.koohyongmo.lockkeyboardclient.keyboard.model.service.SocketService
 import kr.koohyongmo.lockkeyboardclient.utils.CalculateUtil.dp2px
 import kotlin.math.abs
@@ -125,7 +126,7 @@ class LockKeyboardView(
         this.socketService = socketService
     }
 
-    private val mKeyboardOntTouchListener: OnTouchListener = object : OnTouchListener {
+    private val mKeyboardOnTouchListener: OnTouchListener = object : OnTouchListener {
         var dx = 0f
         var dy = 0f
         var moveToY = 0
@@ -287,6 +288,9 @@ class LockKeyboardView(
                             // TODO
                         } else if (primaryCode == CodeGrab) {
                         }
+                } else if (primaryCode == -2){
+                    // 키보드 레이아웃 변경 (숫자 <-> 쿼티)
+                    RxBus.publish(RxEvents.KeyboardChangeLayout())
                 } else {
                     if (start != end) {
                         editable!!.delete(start, end)
@@ -310,6 +314,7 @@ class LockKeyboardView(
         }
 
     companion object {
+        private const val TAG = "LockKeyboardView"
         private const val MOVE_THRESHOLD = 0
         private const val TOP_PADDING_DP = 28
         private val HANDLE_COLOR = Color.parseColor("#AAD1D6D9")
@@ -333,7 +338,7 @@ class LockKeyboardView(
         // Hide the standard keyboard initially
         (getContext() as Activity).window
             .setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN)
-        setOnTouchListener(mKeyboardOntTouchListener)
+        setOnTouchListener(mKeyboardOnTouchListener)
         setPadding(
             0,
             dp2px(

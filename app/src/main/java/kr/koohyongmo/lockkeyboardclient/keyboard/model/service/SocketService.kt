@@ -43,6 +43,7 @@ class SocketService(private val activity: AppCompatActivity) {
     fun listen() {
 
         rsaCipher = RSACipher()
+        Log.d(TAG, rsaCipher.getPublicKey())
 
         NetworkHelper.instance
             .getToken("hmk")

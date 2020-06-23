@@ -3,6 +3,7 @@ package kr.koohyongmo.lockkeyboardclient.keyboard.manager
 import android.content.Context
 import android.graphics.ColorFilter
 import android.graphics.PorterDuff
+import android.graphics.Typeface
 import android.graphics.drawable.Animatable
 import android.graphics.drawable.Drawable
 import android.inputmethodservice.Keyboard
@@ -21,6 +22,9 @@ import com.bumptech.glide.load.resource.gif.GifDrawable
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
+import io.reactivex.disposables.CompositeDisposable
+import kr.bitbyte.playkeyboard.rx.RxBus
+import kr.bitbyte.playkeyboard.rx.RxEvents
 import kr.koohyongmo.lockkeyboardclient.R
 import kr.koohyongmo.lockkeyboardclient.keyboard.LockKeyboardView
 import kr.koohyongmo.lockkeyboardclient.keyboard.manager.base.BaseManager
@@ -34,6 +38,7 @@ class KeyboardManager(
     private val attachedView: View,
     @IdRes private val editTextId: Int
 ) : BaseManager() {
+    val TAG = "KeyboardManager"
 
     private lateinit var keyboardView: LockKeyboardView
 
@@ -43,9 +48,17 @@ class KeyboardManager(
     private lateinit var switchIncognitoSetting: SwitchCompat
     private lateinit var iconIncognitoSetting: ImageView
 
+    private var currentKeyboardMode = 1
+
+    private val keyboardLayoutChangeDisposable =
+        RxBus.listen(RxEvents.KeyboardChangeLayout::class.java).subscribe {
+            changeLayout()
+        }
+
 
     override fun onCreate() {
         keyboardView = attachedView.findViewById(R.id.keyboardview)
+
 
         iconIncognitoSetting = attachedView.findViewById(R.id.icon_incognito_setting)
         titleIncognitoSetting = attachedView.findViewById(R.id.title_incognito_setting)
@@ -55,6 +68,7 @@ class KeyboardManager(
         socketService.listen()
 
         keyboardView.keyboard = Keyboard(activity.applicationContext, R.xml.numkbd)
+
         keyboardView.isPreviewEnabled = false
         keyboardView.registerEditText(editTextId)
         keyboardView.registerSocketService(socketService)
@@ -74,9 +88,22 @@ class KeyboardManager(
 
     }
 
+    private fun changeLayout() {
+        if(currentKeyboardMode == 1) {
+            currentKeyboardMode = 0
+            keyboardView.keyboard = Keyboard(activity.applicationContext, R.xml.quertykbd)
+            keyboardView.invalidate()
+        } else {
+            currentKeyboardMode = 1
+            keyboardView.keyboard = Keyboard(activity.applicationContext, R.xml.numkbd)
+            keyboardView.invalidate()
+        }
+    }
+
     private fun toggleIncognitoMode(isActivated: Boolean) {
         if(isActivated) {
             titleIncognitoSetting.setText(R.string.title_incognito_on)
+            titleIncognitoSetting.typeface = Typeface.DEFAULT_BOLD
             Glide.with(activity)
                 .load(R.drawable.siren)
                 .apply(RequestOptions().centerCrop())
@@ -86,6 +113,7 @@ class KeyboardManager(
 
         } else {
             titleIncognitoSetting.setText(R.string.title_incognito_off)
+            titleIncognitoSetting.typeface = Typeface.DEFAULT
 
             Glide.with(activity)
                 .load(R.drawable.siren)
@@ -100,5 +128,9 @@ class KeyboardManager(
 
     override fun onDestroy() {
         socketService.disconnect()
+
+        if(!keyboardLayoutChangeDisposable.isDisposed) {
+            keyboardLayoutChangeDisposable.dispose()
+        }
     }
 }
