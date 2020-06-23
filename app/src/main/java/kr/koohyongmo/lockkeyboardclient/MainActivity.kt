@@ -6,7 +6,8 @@ import kotlinx.android.synthetic.main.activity_main.*
 import kr.koohyongmo.lockkeyboardclient.keyboard.manager.KeyboardManager
 
 class MainActivity : AppCompatActivity() {
-    val keyboardManager: KeyboardManager by lazy {
+
+    private val keyboardManager: KeyboardManager by lazy {
         KeyboardManager(this, window.decorView, R.id.edit_pass)
     }
     override fun onCreate(savedInstanceState: Bundle?) {

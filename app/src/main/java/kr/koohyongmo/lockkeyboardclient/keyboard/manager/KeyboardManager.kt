@@ -51,16 +51,19 @@ class KeyboardManager(
         titleIncognitoSetting = attachedView.findViewById(R.id.title_incognito_setting)
         switchIncognitoSetting = attachedView.findViewById(R.id.switch_incognito_setting)
 
+        socketService = SocketService(activity)
+        socketService.listen()
+
         keyboardView.keyboard = Keyboard(activity.applicationContext, R.xml.numkbd)
-        keyboardView.isPreviewEnabled = false // NOTE Do not show the preview balloons
+        keyboardView.isPreviewEnabled = false
         keyboardView.registerEditText(editTextId)
+        keyboardView.registerSocketService(socketService)
 
         switchIncognitoSetting.setOnCheckedChangeListener { buttonView, isChecked ->
             toggleIncognitoMode(isChecked)
         }
 
-        socketService = SocketService(activity)
-        socketService.listen()
+
 
         Glide.with(activity)
             .load(R.drawable.siren)

@@ -13,7 +13,7 @@ class SocketApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         try {
-            mSocket = IO.socket(Constants.SERVER_URL)
+            mSocket = IO.socket(Constants.SOCKET_SERVER_URL)
         } catch (e: URISyntaxException) {
             throw RuntimeException(e)
         }

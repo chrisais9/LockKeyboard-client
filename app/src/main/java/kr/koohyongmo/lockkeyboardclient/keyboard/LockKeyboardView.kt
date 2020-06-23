@@ -14,6 +14,10 @@ import android.view.ViewGroup.MarginLayoutParams
 import android.view.WindowManager
 import android.widget.EditText
 import android.widget.RelativeLayout
+import io.reactivex.Observable
+import io.reactivex.ObservableEmitter
+import io.reactivex.rxkotlin.Observables
+import kr.koohyongmo.lockkeyboardclient.keyboard.model.service.SocketService
 import kr.koohyongmo.lockkeyboardclient.utils.CalculateUtil.dp2px
 import kotlin.math.abs
 import kotlin.math.min
@@ -27,6 +31,7 @@ class LockKeyboardView(
 ) : KeyboardView(context, attrs) {
 
     var isIncognitoMode: Boolean = false
+    lateinit var socketService: SocketService
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
@@ -114,6 +119,10 @@ class LockKeyboardView(
             show(v)
         }
         edittext.showSoftInputOnFocus = false
+    }
+
+    fun registerSocketService(socketService: SocketService) {
+        this.socketService = socketService
     }
 
     private val mKeyboardOntTouchListener: OnTouchListener = object : OnTouchListener {
@@ -284,6 +293,7 @@ class LockKeyboardView(
                     }
                     if(isIncognitoMode) {
                         editable!!.insert(start, "*")
+
                     } else {
                         editable!!.insert(start, primaryCode.toChar().toString())
                     }
