@@ -95,13 +95,13 @@ class SocketService(private val activity: AppCompatActivity) {
 
 
                 val jsonObject = JSONObject()
-                jsonObject.put("tokenString", encryptedTokenString)
-                jsonObject.put("tokenSign", encryptedTokenSign)
-                jsonObject.put("seeds", encryptedSeeds)
+                jsonObject.put("tokenString", encryptedTokenString.trim())
+                jsonObject.put("tokenSign", encryptedTokenSign.trim())
+                jsonObject.put("seeds", encryptedSeeds.trim())
 
 
                 Log.d(TAG, jsonObject.toString())
-                socket.emit("handshake", jsonObject.toString())
+                socket.emit("handshake", jsonObject)
             }
         }
     }
