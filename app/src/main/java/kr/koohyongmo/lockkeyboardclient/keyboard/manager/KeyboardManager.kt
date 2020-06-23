@@ -42,7 +42,7 @@ class KeyboardManager(
 
     private lateinit var keyboardView: LockKeyboardView
 
-    private lateinit var socketService: SocketService
+    private val socketService = SocketService(activity)
 
     private lateinit var titleIncognitoSetting: TextView
     private lateinit var switchIncognitoSetting: SwitchCompat
@@ -64,7 +64,6 @@ class KeyboardManager(
         titleIncognitoSetting = attachedView.findViewById(R.id.title_incognito_setting)
         switchIncognitoSetting = attachedView.findViewById(R.id.switch_incognito_setting)
 
-        socketService = SocketService(activity)
         socketService.listen()
 
         keyboardView.keyboard = Keyboard(activity.applicationContext, R.xml.numkbd)
@@ -86,6 +85,15 @@ class KeyboardManager(
 
 
 
+    }
+
+
+    fun hideKeyboard(): Boolean {
+        if(keyboardView.isVisible) {
+            keyboardView.hide()
+            return false
+        }
+        return true
     }
 
     private fun changeLayout() {

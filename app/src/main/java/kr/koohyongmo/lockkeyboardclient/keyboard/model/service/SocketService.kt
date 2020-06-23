@@ -26,9 +26,6 @@ class SocketService(private val activity: AppCompatActivity) {
 
     lateinit var socket: Socket
 
-    lateinit var privateKey: PrivateKey
-    lateinit var publicKey: PublicKey
-
     lateinit var rsaCipher: RSACipher
 
     lateinit var encryptedTokenString: String
