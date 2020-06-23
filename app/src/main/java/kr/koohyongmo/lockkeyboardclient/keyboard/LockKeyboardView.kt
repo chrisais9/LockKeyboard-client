@@ -14,7 +14,6 @@ import android.view.ViewGroup.MarginLayoutParams
 import android.view.WindowManager
 import android.widget.EditText
 import android.widget.RelativeLayout
-import kr.koohyongmo.lockkeyboardclient.keyboard.manager.InputManager
 import kr.koohyongmo.lockkeyboardclient.utils.CalculateUtil.dp2px
 import kotlin.math.abs
 import kotlin.math.min
@@ -248,8 +247,6 @@ class LockKeyboardView(
                 val editable = edittext.text
                 val start = edittext.selectionStart
                 val end = edittext.selectionEnd
-                val inputManager =
-                    InputManager()
 
                 if (primaryCode == CodeCancel) {
                     hide()
@@ -287,7 +284,6 @@ class LockKeyboardView(
                     }
                     if(isIncognitoMode) {
                         editable!!.insert(start, "*")
-                        inputManager.onKeyCharInput(primaryCode)
                     } else {
                         editable!!.insert(start, primaryCode.toChar().toString())
                     }

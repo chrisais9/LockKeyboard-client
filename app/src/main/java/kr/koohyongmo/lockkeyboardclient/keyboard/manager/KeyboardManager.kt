@@ -6,11 +6,13 @@ import android.graphics.PorterDuff
 import android.graphics.drawable.Animatable
 import android.graphics.drawable.Drawable
 import android.inputmethodservice.Keyboard
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.IdRes
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SwitchCompat
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
@@ -22,17 +24,21 @@ import com.bumptech.glide.request.target.Target
 import kr.koohyongmo.lockkeyboardclient.R
 import kr.koohyongmo.lockkeyboardclient.keyboard.LockKeyboardView
 import kr.koohyongmo.lockkeyboardclient.keyboard.manager.base.BaseManager
+import kr.koohyongmo.lockkeyboardclient.keyboard.model.service.SocketService
 
 /**
  * Created by KooHyongMo on 2020/06/20
  */
 class KeyboardManager(
+    private val activity: AppCompatActivity,
     private val attachedView: View,
-    private val context: Context,
     @IdRes private val editTextId: Int
 ) : BaseManager() {
 
     private lateinit var keyboardView: LockKeyboardView
+
+    private lateinit var socketService: SocketService
+
     private lateinit var titleIncognitoSetting: TextView
     private lateinit var switchIncognitoSetting: SwitchCompat
     private lateinit var iconIncognitoSetting: ImageView
@@ -45,7 +51,7 @@ class KeyboardManager(
         titleIncognitoSetting = attachedView.findViewById(R.id.title_incognito_setting)
         switchIncognitoSetting = attachedView.findViewById(R.id.switch_incognito_setting)
 
-        keyboardView.keyboard = Keyboard(context, R.xml.numkbd)
+        keyboardView.keyboard = Keyboard(activity.applicationContext, R.xml.numkbd)
         keyboardView.isPreviewEnabled = false // NOTE Do not show the preview balloons
         keyboardView.registerEditText(editTextId)
 
@@ -53,7 +59,10 @@ class KeyboardManager(
             toggleIncognitoMode(isChecked)
         }
 
-        Glide.with(context)
+        socketService = SocketService(activity)
+        socketService.listen()
+
+        Glide.with(activity)
             .load(R.drawable.siren)
             .apply(RequestOptions().dontAnimate())
             .into(iconIncognitoSetting)
@@ -65,7 +74,7 @@ class KeyboardManager(
     private fun toggleIncognitoMode(isActivated: Boolean) {
         if(isActivated) {
             titleIncognitoSetting.setText(R.string.title_incognito_on)
-            Glide.with(context)
+            Glide.with(activity)
                 .load(R.drawable.siren)
                 .apply(RequestOptions().centerCrop())
                 .into(iconIncognitoSetting)
@@ -75,7 +84,7 @@ class KeyboardManager(
         } else {
             titleIncognitoSetting.setText(R.string.title_incognito_off)
 
-            Glide.with(context)
+            Glide.with(activity)
                 .load(R.drawable.siren)
                 .apply(RequestOptions().dontAnimate())
                 .into(iconIncognitoSetting)
@@ -87,6 +96,6 @@ class KeyboardManager(
 
 
     override fun onDestroy() {
-        TODO("Not yet implemented")
+        socketService.disconnect()
     }
 }

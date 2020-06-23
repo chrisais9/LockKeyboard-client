@@ -1,4 +1,4 @@
-package kr.koohyongmo.lockkeyboardclient.keyboard.application
+package kr.koohyongmo.lockkeyboardclient
 
 import android.app.Application
 import io.socket.client.IO
@@ -6,15 +6,14 @@ import io.socket.client.Socket
 import kr.koohyongmo.lockkeyboardclient.keyboard.Constants
 import java.net.URISyntaxException
 
-/**
- * Created by KooHyongMo on 2020/06/20
- */
-
 class SocketApplication : Application() {
-    var socket: Socket
-    init {
+
+    lateinit var mSocket: Socket
+
+    override fun onCreate() {
+        super.onCreate()
         try {
-            socket = IO.socket(Constants.SERVER_URL)
+            mSocket = IO.socket(Constants.SERVER_URL)
         } catch (e: URISyntaxException) {
             throw RuntimeException(e)
         }
