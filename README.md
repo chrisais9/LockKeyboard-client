@@ -1,5 +1,6 @@
 # LockKeyboard-client
 2020 1학기 팀팀클래스(자료구조, 알고리즘개론) End Term Project
+> [서버는 이곳에](https://github.com/chrisais9/LockKeyboard-server)
 
 ## 프로젝트 결과물 전시 링크
 - [팀팀클래스 프로젝트 전시회](https://sites.google.com/view/kookmin-2020s1-teamteamclass)
