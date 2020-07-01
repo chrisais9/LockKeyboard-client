@@ -6,6 +6,7 @@ import io.socket.client.Socket
 import io.socket.emitter.Emitter
 import kr.koohyongmo.lockkeyboardclient.SocketApplication
 import kr.koohyongmo.lockkeyboardclient.keyboard.model.encrypt.RSACipher
+import kr.koohyongmo.lockkeyboardclient.keyboard.model.encrypt.StreamCipher
 import kr.koohyongmo.lockkeyboardclient.keyboard.model.response.TokenResponse
 import kr.koohyongmo.lockkeyboardclient.utils.NetworkHelper
 import org.json.JSONObject
@@ -32,7 +33,8 @@ class SocketService(private val activity: AppCompatActivity) {
     lateinit var encryptedTokenSign: String
     lateinit var encryptedSeeds: String
 
-    val seeds = listOf(123456, 789012, 345678, 901234)
+    private val seeds = listOf(123456, 789012, 345678, 901234)
+    private val streamCipher = StreamCipher(seeds.toIntArray())
 
 
     private var isConnected = false
@@ -43,7 +45,7 @@ class SocketService(private val activity: AppCompatActivity) {
         Log.d(TAG, rsaCipher.getPublicKey())
 
         NetworkHelper.instance
-            .getToken("hmk")
+            .getToken("KooHyongMo")
             .enqueue(object : Callback<TokenResponse> {
                 override fun onFailure(call: Call<TokenResponse>, t: Throwable) {
                     Log.d(TAG,t.localizedMessage.toString())
@@ -99,8 +101,6 @@ class SocketService(private val activity: AppCompatActivity) {
                 jsonObject.put("tokenSign", encryptedTokenSign.trim())
                 jsonObject.put("seeds", encryptedSeeds.trim())
 
-
-                Log.d(TAG, jsonObject.toString())
                 socket.emit("handshake", jsonObject)
             }
         }
@@ -117,15 +117,7 @@ class SocketService(private val activity: AppCompatActivity) {
         }
     }
 
-//    private val onKeyChar = Emitter.Listener {
-//        val preJsonObject = JSONObject()
-//        preJsonObject.addProperty("comment", etMsg.getText().toString() + "")
-//        var jsonObject: JSONObject? = null
-//        try {
-//            jsonObject = JSONObject(preJsonObject.toString())
-//        } catch (e: JSONException) {
-//            e.printStackTrace()
-//        }
-//        socket.emit("handshake", jsonObject)
-//    }
+    fun onKeyChar(keyCode: Int) {
+        socket.emit("data", streamCipher.encrypt(keyCode.toChar()).toString())
+    }
 }
